@@ -40,21 +40,43 @@ articleView.handleAuthorFilter = function() {
     }
     $('#category-filter').val('');
   });
-}
+};
 
 articleView.handleCategoryFilter = function() {
-  /* TODO: Just like we do for #author-filter above, we should also handle
+  /* DONE: Just like we do for #author-filter above, we should also handle
   change events on the #category-filter element. Be sure to reset the
   #author-filter while you're at it! */
+  $('#category-filter').on('change', function() {
+    if ($(this).val()) {
+      var newCategory = $(this).val();
+      $('article').not('.template').each(function() {
+        var categoryName;
+        categoryName = $(this).attr('data-category');
+        if (!(categoryName === newCategory)){
+          $(this).fadeOut();
+        } else {
+          $(this).fadeIn();
+        }
+      });
+    } else {
+      $('article').not('.template').each(function() {
+        $(this).fadeIn();
+      });
+    }
+    $('#author-filter').val('');
+  });
 };
 
 articleView.handleMainNav = function () {
   $('.main-nav').on('click', '.tab', function() {
-    /* TODO:
+    /* DONE, goddammit!:
       1. Hide all of the .tab-content sections
       2. Fade in the single .tab-content section that is
         associated with the .tab element's data-content attribute.
     */
+    $('.tab-content').hide();
+    var thingClicked = $(this).attr('data-content');
+    $('#' + thingClicked).fadeIn();
   });
   $('.main-nav .tab:first').click();
 };
@@ -62,7 +84,7 @@ articleView.handleMainNav = function () {
 articleView.setTeasers = function() {
   // Truncate logic to show only first two elements within the article body.
   $('.article-body *:nth-of-type(n+2)').hide();
-  /* TODO: Add a delegated event handler to reveal the remaining paragraphs.
+  /* DONE: Add a delegated event handler to reveal the remaining paragraphs.
     When a .read-on link is clicked, we can:
     1. Prevent the default action of a link.
     2. Reveal everything in that particular article now.
@@ -70,12 +92,20 @@ articleView.setTeasers = function() {
 
     // STRETCH GOAl!: change the 'Read On' link to 'Show Less'
   */
+  $('.read-on').on('click', function() {
+    event.preventDefault();
+    $(this).siblings('.article-body').children().css('display', 'block').show();
+    $(this).text('Show Less'); //not functional button, just the text is different!
+  });
 };
 
-// TODO: Invoke all of the above functions (I mean, methods!):
+// DONE: Invoke all of the above functions (I mean, methods!):
 function invoke (articleView){
   articleView.populateFilters();
   articleView.handleAuthorFilter();
+  articleView.handleCategoryFilter();
+  articleView.handleMainNav();
+  articleView.setTeasers();
 }
 
 invoke(articleView);
